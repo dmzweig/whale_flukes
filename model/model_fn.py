@@ -66,9 +66,15 @@ def model_fn(mode, inputs, params, reuse=False):
     Returns:
         model_spec: (dict) contains the graph operations or nodes needed for training / evaluation
     """
+    # Determine whether we are training or evaluating or testing
     is_training = (mode == 'train')
-    labels = inputs['labels']
-    labels = tf.cast(labels, tf.int64)
+    is_predicting = (mode == 'predict')
+    is_not_predicting = (mode == 'train') or (mode == 'eval')
+
+    if is_not_predicting:
+        labels = inputs['labels']
+        labels = tf.cast(labels, tf.int64)
+    
 
     # -----------------------------------------------------------
     # MODEL: define the layers of the model
@@ -78,8 +84,9 @@ def model_fn(mode, inputs, params, reuse=False):
         predictions = tf.argmax(logits, 1)
 
     # Define loss and accuracy
-    loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
-    accuracy = tf.reduce_mean(tf.cast(tf.equal(labels, predictions), tf.float32))
+    if is_not_predicting:
+        loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
+        accuracy = tf.reduce_mean(tf.cast(tf.equal(labels, predictions), tf.float32))
 
     # Define training step that minimizes the loss with the Adam optimizer
     if is_training:
@@ -95,34 +102,35 @@ def model_fn(mode, inputs, params, reuse=False):
 
     # -----------------------------------------------------------
     # METRICS AND SUMMARIES
-    # Metrics for evaluation using tf.metrics (average over whole dataset)
-    with tf.variable_scope("metrics"):
-        metrics = {
-            'accuracy': tf.metrics.accuracy(labels=labels, predictions=tf.argmax(logits, 1)),
-            'loss': tf.metrics.mean(loss)
-        }
+    if is_not_predicting:
+        # Metrics for evaluation using tf.metrics (average over whole dataset)
+        with tf.variable_scope("metrics"):
+            metrics = {
+                'accuracy': tf.metrics.accuracy(labels=labels, predictions=tf.argmax(logits, 1)),
+                'loss': tf.metrics.mean(loss)
+            }
 
-    # Group the update ops for the tf.metrics
-    update_metrics_op = tf.group(*[op for _, op in metrics.values()])
+        # Group the update ops for the tf.metrics
+        update_metrics_op = tf.group(*[op for _, op in metrics.values()])
 
-    # Get the op to reset the local variables used in tf.metrics
-    metric_variables = tf.get_collection(tf.GraphKeys.LOCAL_VARIABLES, scope="metrics")
-    metrics_init_op = tf.variables_initializer(metric_variables)
+        # Get the op to reset the local variables used in tf.metrics
+        metric_variables = tf.get_collection(tf.GraphKeys.LOCAL_VARIABLES, scope="metrics")
+        metrics_init_op = tf.variables_initializer(metric_variables)
 
-    # Summaries for training
-    tf.summary.scalar('loss', loss)
-    tf.summary.scalar('accuracy', accuracy)
-    tf.summary.image('train_image', inputs['images'])
+        # Summaries for training
+        tf.summary.scalar('loss', loss)
+        tf.summary.scalar('accuracy', accuracy)
+        tf.summary.image('train_image', inputs['images'])
 
-    #TODO: if mode == 'eval': ?
-    # Add incorrectly labeled images
-    mask = tf.not_equal(labels, predictions)
+        #TODO: if mode == 'eval': ?
+        # Add incorrectly labeled images
+        mask = tf.not_equal(labels, predictions)
 
-    # Add a different summary to know how they were misclassified
-    for label in range(0, params.num_labels):
-        mask_label = tf.logical_and(mask, tf.equal(predictions, label))
-        incorrect_image_label = tf.boolean_mask(inputs['images'], mask_label)
-        tf.summary.image('incorrectly_labeled_{}'.format(label), incorrect_image_label)
+        # Add a different summary to know how they were misclassified
+        for label in range(0, params.num_labels):
+            mask_label = tf.logical_and(mask, tf.equal(predictions, label))
+            incorrect_image_label = tf.boolean_mask(inputs['images'], mask_label)
+            tf.summary.image('incorrectly_labeled_{}'.format(label), incorrect_image_label)
 
     # -----------------------------------------------------------
     # MODEL SPECIFICATION
@@ -132,11 +140,14 @@ def model_fn(mode, inputs, params, reuse=False):
     print("model_spec beginning = "+str(model_spec))
     model_spec['variable_init_op'] = tf.global_variables_initializer()
     model_spec["predictions"] = predictions
-    model_spec['loss'] = loss
-    model_spec['accuracy'] = accuracy
-    model_spec['metrics_init_op'] = metrics_init_op
-    model_spec['metrics'] = metrics
-    model_spec['update_metrics'] = update_metrics_op
+    
+    if is_not_predicting:
+        model_spec['loss'] = loss
+        model_spec['accuracy'] = accuracy
+        model_spec['metrics_init_op'] = metrics_init_op
+        model_spec['metrics'] = metrics
+        model_spec['update_metrics'] = update_metrics_op
+    
     model_spec['summary_op'] = tf.summary.merge_all()
 
     if is_training:

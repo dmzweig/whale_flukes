@@ -22,6 +22,24 @@ def _parse_function(filename, label, size):
 
     return resized_image, label
 
+def _parse_function_test(filename, size):
+    """Obtain the image from the filename for the test process.
+
+    The following operations are applied:
+        - Decode the image from jpeg format
+        - Convert to float and to range [0, 1]
+    """
+    image_string = tf.read_file(filename)
+
+    # Don't use tf.image.decode_image, or the output shape will be undefined
+    image_decoded = tf.image.decode_jpeg(image_string, channels=3)
+
+    # This will convert to float values in [0, 1]
+    image = tf.image.convert_image_dtype(image_decoded, tf.float32)
+
+    resized_image = tf.image.resize_images(image, [size, size])
+
+    return resized_image
 
 def train_preprocess(image, label, use_random_flip):
     """Image preprocessing for training.
@@ -84,4 +102,38 @@ def input_fn(is_training, filenames, labels, params):
     iterator_init_op = iterator.initializer
 
     inputs = {'images': images, 'labels': labels, 'iterator_init_op': iterator_init_op}
+    return inputs
+
+def input_fn_test(filenames, params):
+    """Input function for the Whales Test dataset.
+
+    The filenames have format "{id}.jpg".
+    For instance: "data_dir/4584.jpg".
+
+    Args:
+        is_training: (bool) whether to use the train or test pipeline.
+                     At training, we shuffle the data and have multiple epochs
+        filenames: (list) filenames of the images, as ["data_dir/{label}_IMG_{id}.jpg"...]
+        params: (Params) contains hyperparameters of the model (ex: `params.num_epochs`)
+    """
+
+    num_samples = len(filenames)
+    
+    # Create a Dataset serving batches of images and labels
+    # We don't repeat for multiple epochs because we always train and evaluate for one epoch
+    parse_fn = lambda f: _parse_function_test(f, params.image_size)
+    # No need for train_fn
+
+    dataset = (tf.data.Dataset.from_tensor_slices(tf.constant(filenames))
+        .map(parse_fn)
+        .batch(params.batch_size)
+        .prefetch(1)  # make sure you always have one batch ready to serve
+    )
+
+    # Create reinitializable iterator from dataset
+    iterator = dataset.make_initializable_iterator()
+    images = iterator.get_next()
+    iterator_init_op = iterator.initializer
+
+    inputs = {'images': images, 'iterator_init_op': iterator_init_op}
     return inputs
