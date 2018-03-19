@@ -6,19 +6,20 @@ import os
 import random
 
 import tensorflow as tf
+import numpy as np
 
-from model.input_fn import input_fn
+from model.input_fn_triplet import input_fn
 from model.utils import Params
 from model.utils import set_logger
 from model.utils import save_dict_to_json
-from model.model_fn import model_fn
+from model.model_fn_triplet import model_fn
 from model.training import train_and_evaluate
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_dir', default='experiments/test',
                     help="Experiment directory containing params.json")
-parser.add_argument('--data_dir', default='data/64x64_SIGNS',
+parser.add_argument('--data_dir', default='data/64x64_whales',
                     help="Directory containing the dataset")
 parser.add_argument('--restore_from', default=None,
                     help="Optional, directory or file containing weights to reload before training")
@@ -36,9 +37,9 @@ if __name__ == '__main__':
 
     # Check that we are not overwriting some previous experiment
     # Comment these lines if you are developing your model and don't care about overwritting
-    model_dir_has_best_weights = os.path.isdir(os.path.join(args.model_dir, "best_weights"))
-    overwritting = model_dir_has_best_weights and args.restore_from is None
-    assert not overwritting, "Weights found in model_dir, aborting to avoid overwrite"
+    # model_dir_has_best_weights = os.path.isdir(os.path.join(args.model_dir, "best_weights"))
+    # overwritting = model_dir_has_best_weights and args.restore_from is None
+    # assert not overwritting, "Weights found in model_dir, aborting to avoid overwrite"
 
     # Set the logger
     set_logger(os.path.join(args.model_dir, 'train.log'))
@@ -46,8 +47,8 @@ if __name__ == '__main__':
     # Create the input data pipeline
     logging.info("Creating the datasets...")
     data_dir = args.data_dir
-    train_data_dir = os.path.join(data_dir, "train_signs")
-    dev_data_dir = os.path.join(data_dir, "dev_signs")
+    train_data_dir = os.path.join(data_dir, "train_sample_whales")
+    dev_data_dir = os.path.join(data_dir, "dev_sample_whales")
 
     # Get the filenames from the train and dev sets
     train_filenames = [os.path.join(train_data_dir, f) for f in os.listdir(train_data_dir)
@@ -55,9 +56,11 @@ if __name__ == '__main__':
     eval_filenames = [os.path.join(dev_data_dir, f) for f in os.listdir(dev_data_dir)
                       if f.endswith('.jpg')]
 
-    # Labels will be between 0 and 5 included (6 classes in total)
+                    
+    # Labels will be between 0 and (number of labels minus 1) ("num of labels" classes in total)
     train_labels = [int(f.split('/')[-1][0]) for f in train_filenames]
     eval_labels = [int(f.split('/')[-1][0]) for f in eval_filenames]
+
 
     # Specify the sizes of the dataset we train on and evaluate on
     params.train_size = len(train_filenames)
