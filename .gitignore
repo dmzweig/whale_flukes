@@ -106,3 +106,4 @@ venv.bak/
 # my files
 data/
 experiments/
+.DS_Store
