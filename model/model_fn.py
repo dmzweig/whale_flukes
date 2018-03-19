@@ -81,7 +81,14 @@ def model_fn(mode, inputs, params, reuse=False):
     with tf.variable_scope('model', reuse=reuse):
         # Compute the output distribution of the model and the predictions
         logits = build_model(is_training, inputs, params)
-        predictions = tf.argmax(logits, 1)
+
+        # Define the prediction_result dictionnary that contains the labels ("classes")
+        # as well as the probabilities of each labels for each case
+        prediction_results = {"classes": tf.argmax(logits, 1),
+        "probabilities": tf.nn.softmax(logits, name="softmax_tensor")}
+        predictions = prediction_results["classes"]
+        probabilities = prediction_results["probabilities"]
+        print("probabilities = "+str(probabilities)) # This is a tensor
 
     # Define loss and accuracy
     if is_not_predicting:
@@ -140,6 +147,7 @@ def model_fn(mode, inputs, params, reuse=False):
     print("model_spec beginning = "+str(model_spec))
     model_spec['variable_init_op'] = tf.global_variables_initializer()
     model_spec["predictions"] = predictions
+    model_spec['probabilities'] = probabilities
     
     if is_not_predicting:
         model_spec['loss'] = loss

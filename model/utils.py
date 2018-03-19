@@ -2,6 +2,7 @@
 
 import json
 import logging
+import os
 
 
 class Params():
@@ -75,3 +76,21 @@ def save_dict_to_json(d, json_path):
         # We need to convert the values to float for json (it doesn't accept np.array, np.float, )
         d = {k: float(v) for k, v in d.items()}
         json.dump(d, f, indent=4)
+
+def save_array_to_txt(filenames, d, txt_path):
+    """Saves dict of floats in json file
+
+    Args:
+        filenames: array of the directory of all the files
+        d: array of float-castable values (np.float, int, float, etc.)
+        txt_path: (string) path to json file
+    """
+    with open(txt_path, 'w') as f:
+        # We need to convert the values to float for json (it doesn't accept np.array, np.float, )
+        f.write("Image,Id"+'\n')
+        for i in range(len(d[0])):
+            f.write(os.path.basename(os.path.normpath(filenames[i]))+',')
+            f.write("d[0][{}]=".format(i) + str(d[0][i]) + '\n')
+
+        
+
