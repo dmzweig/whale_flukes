@@ -14,10 +14,11 @@ from model.utils import set_logger
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model_dir', default='experiments/base_model',
+parser.add_argument('--model_dir', default='experiments/learning_rate',
                     help="Experiment directory containing params.json")
-parser.add_argument('--data_dir', default='data/64x64_NUMBER_LABELS_WHALES',
+parser.add_argument('--data_dir', default='data/64x64_NUMBER_LABELS_WHALES_NONW',
                     help="Directory containing the dataset")
+parser.add_argument('--label_matrix', default='labels_matrix_nonw.txt',  help="Matrix of the labels <> numbers, without new_whale")
 parser.add_argument('--restore_from', default='best_weights',
                     help="Subdirectory of model dir or file containing the weights")
 
@@ -44,8 +45,8 @@ if __name__ == '__main__':
     test_filenames = os.listdir(test_data_dir)
     test_filenames = [os.path.join(test_data_dir, f) for f in test_filenames if f.endswith('.jpg')]
 
-    # We don't need labels for our application
-    # test_labels = [int(f.split('/')[-1][0]) for f in test_filenames]
+    # Get the list of labels
+    labels_matrix_nonw_file = args.label_matrix
 
     # specify the size of the evaluation set
     params.eval_size = len(test_filenames)
@@ -58,4 +59,4 @@ if __name__ == '__main__':
     model_spec = model_fn('predict', test_inputs, params, reuse=False)
 
     logging.info("Starting prediction")
-    predict(model_spec, args.model_dir, params, args.restore_from)
+    predict(model_spec, args.model_dir, test_filenames, labels_matrix_nonw_file, params, args.restore_from)

@@ -9,8 +9,8 @@ from PIL import Image
 from tqdm import tqdm
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_dir', default='whales_originalfiles/WHALES', help="Directory with the WHALES dataset")
-parser.add_argument('--output_dir', default='data/NUMBER_LABELS_WHALES', help="Where to write the new data")
+parser.add_argument('--data_dir', default='whales_originalfiles/train_whales_original', help="Directory with the WHALES dataset")
+parser.add_argument('--output_dir', default='data/NUMBER_LABELS_WHALES_NONW/train_whales', help="Where to write the new data")
 parser.add_argument('--whale_labels_file', default='whale_labels.txt', help="Where are your labels?")
 
 def rename_and_save_image(file_name, label, data_dir, output_dir):
@@ -53,9 +53,13 @@ def associate_label_with_number(file, label_list):
 		indicator = 0
 		temp_label = 0
 		for j in range(i-1):
-			if label_number_list[i][1] == label_number_list[j][1]:
-				temp_label = label_number_list[j][2] # If the j label has already been associated with a label number at the i line, store the label on temp_label
+			if label_number_list[i][1] == 'new_whale':
+				temp_label = 5000
 				indicator += 1
+			else:
+				if label_number_list[i][1] == label_number_list[j][1]:
+					temp_label = label_number_list[j][2] # If the j label has already been associated with a label number at the i line, and different than new_whale, store the label on temp_label
+					indicator += 1
 		if (indicator !=0):
 			label_number_list[i][2] = temp_label # If the j label has already been associated with a label number, copy the label number on the j line
 		else:

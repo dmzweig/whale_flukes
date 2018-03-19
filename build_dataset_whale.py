@@ -28,8 +28,8 @@ from tqdm import tqdm
 SIZE = 64
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_dir', default='data/NUMBER_LABELS_WHALES', help="Directory with the RENAMED_WHALES dataset")
-parser.add_argument('--output_dir', default='data/64x64_NUMBER_LABELS_WHALES', help="Where to write the new data")
+parser.add_argument('--data_dir', default='data/NUMBER_LABELS_WHALES_NONW', help="Directory with the RENAMED_WHALES dataset")
+parser.add_argument('--output_dir', default='data/64x64_NUMBER_LABELS_WHALES_NONW', help="Where to write the new data")
 
 
 def resize_and_save(filename, output_dir, size=SIZE):
