@@ -10,9 +10,9 @@ from model.utils import Params
 
 PYTHON = sys.executable
 parser = argparse.ArgumentParser()
-parser.add_argument('--parent_dir', default='experiments/learning_rate',
+parser.add_argument('--parent_dir', default='experiments/hyperparam_search',
                     help="Directory containing params.json")
-parser.add_argument('--data_dir', default='data/64x64_SIGNS',
+parser.add_argument('--data_dir', default='data/64x64_NUMBER_LABELS_WHALES_NONW',
                     help="Directory containing the dataset")
 
 
@@ -34,7 +34,7 @@ def launch_training_job(parent_dir, data_dir, job_name, params):
     params.save(json_path)
 
     # Launch training with this config
-    cmd = "{python} train.py --model_dir {model_dir} --data_dir {data_dir}".format(python=PYTHON,
+    cmd = "{python} train.py --model_dir {model_dir} --data_dir {data_dir} --restore_from experiments/hyperparam_search/best_weights".format(python=PYTHON,
             model_dir=model_dir, data_dir=data_dir)
     print(cmd)
     check_call(cmd, shell=True)
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     params = Params(json_path)
 
     # Perform hypersearch over one parameter
-    learning_rates = [1e-4, 1e-3, 1e-2]
+    learning_rates = [1e-4, 1e-2, 1e-1]
 
     for learning_rate in learning_rates:
         # Modify the relevant parameter in params

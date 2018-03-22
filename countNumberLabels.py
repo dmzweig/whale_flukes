@@ -1,3 +1,8 @@
+'''Basic file counting the number of labels. We subsequently found a much easier way 
+of doing so.
+'''
+
+
 import argparse
 import random
 import os
@@ -9,7 +14,7 @@ from PIL import Image
 from tqdm import tqdm
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--whale_labels_file', default='whale_labels.txt', help="Where are your labels?")
+parser.add_argument('--whale_labels_file', default='label_files/whale_labels.txt', help="Where are your labels?")
 
 
 def count_labels(label_list):
@@ -36,16 +41,8 @@ def count_labels(label_list):
 if __name__ == '__main__':
 	args = parser.parse_args()
 
-	whale_labels_essai = np.array([["0a0b2a01.jpg","1"],["0a0bc259.jpg","2"],["0a00c8c5.jpg","3"]])
-	#print("whale_labels_essai[1] = " +str(whale_labels_essai[1]))
 
-	#print("args.whale_labels_file ="+str(args.whale_labels_file))
-	'''print("pd.read_csv(args.whale_labels_file, sep =',', header=None)="+str(pd.read_csv(args.whale_labels_file, sep =',', header=None)))
-	whale_labels = pd.read_csv(args.whale_labels_file, sep =',', header=None).as_matrix() '''#Reads then convert into numpy array
-	
 	whale_labels = np.loadtxt(args.whale_labels_file, delimiter = ',', dtype="U25")
-
-	#print("whale_labels = " + str(whale_labels))
 
 	##Gets the filenames from the directory
 	#filenames = os.listdir(args.data_dir)
@@ -53,7 +50,7 @@ if __name__ == '__main__':
 
 	list_of_all_labels = count_labels(whale_labels)
 
-	file = open("list_of_all_labels.txt", "w")
+	file = open("label_files/list_of_all_labels.txt", "w")
 	file.write(str(list_of_all_labels))
 
 	print("List of all labels = " + str(list_of_all_labels))

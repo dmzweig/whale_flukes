@@ -107,3 +107,4 @@ venv.bak/
 data/
 experiments/
 .DS_Store
+face_reco/

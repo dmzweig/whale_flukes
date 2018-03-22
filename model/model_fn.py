@@ -1,4 +1,7 @@
-"""Define the model."""
+"""Define the model.
+
+In addition to train and eval, created a third mode 'predict', along with new metrics.
+"""
 
 import tensorflow as tf
 
@@ -35,8 +38,6 @@ def build_model(is_training, inputs, params):
             out = tf.layers.max_pooling2d(out, 2, 2)
             counter += 1
             print(counter)
-
-    # print("out.get_shape().as_list() = "+str(out.get_shape().as_list()))
 
     # Need to have at the end a greater size of filter because the images have a greater size.
     assert out.get_shape().as_list() == [None, 4, 4, num_channels * 8]
@@ -90,7 +91,7 @@ def model_fn(mode, inputs, params, reuse=False):
         probabilities = prediction_results["probabilities"]
         print("probabilities = "+str(probabilities)) # This is a tensor
 
-    # Define loss and accuracy
+    # Define loss and accuracy if we're not in the predict mode
     if is_not_predicting:
         loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
         accuracy = tf.reduce_mean(tf.cast(tf.equal(labels, predictions), tf.float32))

@@ -1,4 +1,7 @@
-"""Predict the model"""
+"""Predict the model and outputs the 15,000+ predictions under the formatting required
+for our Kaggle challenge submission, as a .csv file:
+
+IMG_ID,prediction_1 prediction_2 prediction_3 prediction_4 prediction_5"""
 
 import argparse
 import logging
@@ -18,7 +21,7 @@ parser.add_argument('--model_dir', default='experiments/learning_rate',
                     help="Experiment directory containing params.json")
 parser.add_argument('--data_dir', default='data/64x64_NUMBER_LABELS_WHALES_NONW',
                     help="Directory containing the dataset")
-parser.add_argument('--label_matrix', default='labels_matrix_nonw.txt',  help="Matrix of the labels <> numbers, without new_whale")
+parser.add_argument('--label_matrix', default='label_files/labels_matrix_nonw.txt',  help="Matrix of the labels <> numbers, without new_whale")
 parser.add_argument('--restore_from', default='best_weights',
                     help="Subdirectory of model dir or file containing the weights")
 

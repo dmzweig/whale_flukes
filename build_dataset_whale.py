@@ -1,20 +1,18 @@
-"""Split the SIGNS dataset into train/dev/test and resize images to 64x64.
+"""Split the whales dataset into train and dev sets.
 
-The SIGNS dataset comes in the following format:
-    train_signs/
+The whales dataset comes in the following format:
+    train_whales/
         0_IMG_5864.jpg
         ...
-    test_signs/
-        0_IMG_5942.jpg
-        ...
 
-Original images have size (3024, 3024).
-Resizing to (64, 64) reduces the dataset size from 1.16 GB to 4.7 MB, and loading smaller images
-makes training faster.
+Original images have varying sizes, but generally a width of around 1050 pixels.
+Resizing to (256, 256) will give us uniform image sizes and hopefully preserve enough 
+resolution to distinguish individual whales. In this first attempt, we are simply resizing without
+special attention to aspect ratio, which will lead to image distortion.
 
-We already have a test set created, so we only need to split "train_signs" into train and dev sets.
-Because we don't have a lot of images and we want that the statistics on the dev set be as
-representative as possible, we'll take 20% of "train_signs" as dev set.
+We already have a test set created, so we only need to split "train_whales" into train and dev sets.
+Because we don't have a lot of images and we want that the statistics on the dev set to be as
+representative as possible, we'll take 20% of "train_whales" as dev set.
 """
 
 import argparse

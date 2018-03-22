@@ -1,4 +1,8 @@
-"""Define the model."""
+"""Define the model for the triplet loss implementation.
+
+We didn't manage to bring this approach to completion, unfortunately,
+and the data pipeline was actually much more complex than anticipated.
+"""
 
 import tensorflow as tf
 from tensorflow.contrib.losses.python.metric_learning.metric_loss_ops import triplet_semihard_loss

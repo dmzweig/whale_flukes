@@ -1,3 +1,6 @@
+'''Rename the orginal files with their labels
+To be run before reducing the size to 64x64'''
+
 import argparse
 import random
 import os
@@ -11,7 +14,7 @@ from tqdm import tqdm
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', default='whales_originalfiles/train_whales_original', help="Directory with the WHALES dataset")
 parser.add_argument('--output_dir', default='data/NUMBER_LABELS_WHALES_NONW/train_whales', help="Where to write the new data")
-parser.add_argument('--whale_labels_file', default='whale_labels.txt', help="Where are your labels?")
+parser.add_argument('--whale_labels_file', default='label_files/whale_labels.txt', help="Where are your labels?")
 
 def rename_and_save_image(file_name, label, data_dir, output_dir):
 	'''Rename one single file with the convention {label}_IMG_{id}.jpg'''
@@ -88,7 +91,7 @@ if __name__ == '__main__':
 	# (We need number labels to make the code work)
 	# First, we load the file with [IMG_ID, label] into a np.array
 	# Then we create the whale_labels_numbers = [IMG_ID, label, label_number]
-	file = open("whale_labels_numbers.txt", "w")
+	file = open("label_files/whale_labels_numbers.txt", "w")
 	whale_labels = np.loadtxt(args.whale_labels_file, delimiter = ',', dtype="U25")
 	whale_labels_numbers = associate_label_with_number(file, whale_labels)
 

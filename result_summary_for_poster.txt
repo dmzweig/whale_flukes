@@ -1,0 +1,60 @@
+FINAL RESULTS
+
+|                                                    |   accuracy |     loss |
+|:---------------------------------------------------|-----------:|---------:|
+| experiments/hyperparam_search/learning_rate_0.01   |   0.284845 | 1.85392  |
+| experiments/hyperparam_search                      |   0.284292 | 1.89931  |
+| experiments/hyperparam_search/learning_rate_0.001  |   0.284845 | 1.88854  |
+| experiments/softmax_crossentr_4250labels_1         |   0.299779 | 5.7702   |
+| experiments/aug1_softmax                           |   0.306416 | 2.14078  |
+| experiments/triplet_loss_1                         |   0        | 0.5      |
+| experiments/hyperparam_search/learning_rate_0.0001 |   0.286504 | 1.89952  |
+| experiments/triplet_loss_3_aug                     |   0        | 0.447403 |
+
+For each of those categories:
+EPOCH XXXX
+Train set accuracy
+Dev set accuracy
+Test set accuracy when applicable
+
+--------------experiments/aug1_softmax
+EPOCH 13/25 --- After, there was overfitting
+Train metrics: loss: 1.597 ; accuracy: 0.393
+2018-03-20 19:59:29,766:INFO: - Eval metrics: loss: 2.141 ; accuracy: 0.306
+
+2018-03-20 21:03:10,979:INFO: Epoch 22/25
+2018-03-20 21:10:59,285:INFO: - Train metrics: loss: 1.281 ; accuracy: 0.514
+2018-03-20 21:11:18,810:INFO: - Eval metrics: loss: 2.757 ; accuracy: 0.281
+
+
+--------------experiments/softmax_crossentr_4250labels_1
+2018-03-20 21:59:08,642:INFO: Epoch 13/38
+2018-03-20 22:00:28,518:INFO: - Train metrics: loss: 1.784 ; accuracy: 0.322
+2018-03-20 22:00:55,030:INFO: - Eval metrics: loss: 1.925 ; accuracy: 0.268
+
+
+2018-03-20 22:41:46,073:INFO: Epoch 38/38 Overfitting!!!!
+2018-03-20 22:43:01,434:INFO: - Train metrics: loss: 0.208 ; accuracy: 0.929
+2018-03-20 22:43:22,489:INFO: - Eval metrics: loss: 5.770 ; accuracy: 0.300
+
+--------------experiments/hyperparam_search/learning_rate_0.0001
+2018-03-21 04:22:52,127:INFO: Epoch 8/10
+2018-03-21 04:24:09,657:INFO: - Train metrics: accuracy: 0.296 ; loss: 1.843
+2018-03-21 04:24:31,111:INFO: - Eval metrics: accuracy: 0.285 ; loss: 1.854
+
+2018-03-21 04:26:29,081:INFO: Epoch 10/10 Start decrease performance
+2018-03-21 04:27:46,977:INFO: - Train metrics: accuracy: 0.301 ; loss: 1.838
+2018-03-21 04:28:06,930:INFO: - Eval metrics: accuracy: 0.278 ; loss: 1.858
+
+--------------experiments/hyperparam_search/learning_rate_0.001
+2018-03-21 04:04:37,835:INFO: - Train metrics: loss: 1.765 ; accuracy: 0.334
+2018-03-21 04:04:57,978:INFO: - Eval metrics: loss: 1.889 ; accuracy: 0.285
+
+Reaches the same accuracy but more slowly! Would have been interesting to run the hyperparameter search much longer.
+
+--------------experiments/hyperparam_search/learning_rate_0.0001
+2018-03-21 03:41:16,574:INFO: Epoch 10/10
+2018-03-21 03:42:32,479:INFO: - Train metrics: loss: 1.818 ; accuracy: 0.325
+2018-03-21 03:42:53,069:INFO: - Eval metrics: loss: 1.866 ; accuracy: 0.285
+
+Similar!
