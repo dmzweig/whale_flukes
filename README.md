@@ -13,7 +13,7 @@ The original images correspond to 20,060 images of whale tails,
 images are named following where the label is in `[0, 5]`.
 The training set contains 1,080 images and the test set contains 120 images.
 
-Run the script `build_dataset_whale.py` which will resize the images to size `(64, 64)`. The new reiszed dataset will be located by default in `data/64x64_SIGNS`:
+Run the script `build_dataset_whale.py` which will resize the images to size `(64, 64)`:
 
 ```bash
 python build_dataset.py --data_dir (your data dir) --output_dir data/64x64_NUMBER_LABELS_WHALES_NONW
@@ -25,6 +25,10 @@ that now needs to be moved out of the training folder.
 
 ## Augment the data
 
+data_aug.py generates additional images to supplement the initial dataset by performing a series of random rotations, zooms, and shifts to the input image. It should be run after the dataset has been renamed and the initial dataset built, using only the training images as an input. After creating the augmented images, they should be combined with the source images to make the complete training dataset. It takes as inputs a data_dir, the source of the images to be augmented, and an int_dir,the directory to which the images should be saved before combination with the original set:
+
+```bash
+python data_aug.py --data_dir data/train_whales --int_dir data/train_whales_augments
 
 
 ## Quickstart (~10 min) [Points 2-5, (c) Olivier Moindrot & Guillaume Genthial]
