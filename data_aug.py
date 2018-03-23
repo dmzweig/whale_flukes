@@ -35,9 +35,9 @@ def data_augment(data_dir, int_dir):
 
     ### Define rotation criteria ###
     # Number of rotations per image
-    num_rotations = 3
+    num_rotations = 2
     # Random rotation range in degrees
-    rot_range = 45
+    rot_range = 20
     # Axis indices
     row_axis = 0
     col_axis = 1
